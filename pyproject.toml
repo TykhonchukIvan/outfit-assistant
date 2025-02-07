@@ -3,12 +3,22 @@ name = "outfit-assistant"
 version = "0.1.0"
 description = ""
 authors = ["IvanTykhonchuk <iv.tikhonchuk@gmail.com>"]
+packages = [
+  { include = "src" }
+]
 readme = "README.md"
+
 
 [tool.poetry.dependencies]
 python = "^3.11"
+python-dotenv = "^1.0.1"
+python-telegram-bot = "^21.10"
+logging = "^0.4.9.6"
+openai = "^1.61.1"
+boto3 = "^1.36.14"
 
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
