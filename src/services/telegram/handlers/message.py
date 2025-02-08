@@ -2,6 +2,8 @@ from pprint import pprint
 from telegram import Update, ReplyKeyboardRemove
 from telegram.ext import ContextTypes
 
+from src.core.messages import MESSAGES
+
 
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.message.chat_id
@@ -16,17 +18,16 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
             context.user_data["awaiting_phone"] = False
             reply_markup = ReplyKeyboardRemove()
-            await update.message.reply_text(f"✅ Ваш номер збережено: {phone_number}", reply_markup=reply_markup)
+            await update.message.reply_text(f"""{MESSAGES["number_saved"]} {phone_number}""", reply_markup=reply_markup)
 
             telegram_service = context.bot_data["telegram_service"]
-            mediator = context.bot_data["service_mediator"]
 
-            existing_user = mediator.dynamo_db.get_user(str(user_id))
+            existing_user = telegram_service.find_user_callback(user_id)
             if existing_user:
                 if existing_user.get("survey_completed") is True:
-                    await telegram_service.send_message(user_id, "🔓 Ви вже зареєстровані та анкету заповнили!")
+                    await telegram_service.send_message(user_id, MESSAGES["already_registered_filled"])
                 else:
-                    await telegram_service.send_message(user_id, "Ви вже зареєстровані, але анкету не заповнили.")
+                    await telegram_service.send_message(user_id, MESSAGES["already_registered_not_filled"])
                     await telegram_service.start_survey(user_id)
             else:
                 if telegram_service.registration_callback:
@@ -37,7 +38,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
                         "last_name": last_name
                     })
         else:
-            await update.message.reply_text("Будь ласка, введіть ваш номер телефону (наприклад, 0971234567).")
+            await update.message.reply_text(MESSAGES["enter_phone_number"])
         return
 
     telegram_service = context.bot_data["telegram_service"]

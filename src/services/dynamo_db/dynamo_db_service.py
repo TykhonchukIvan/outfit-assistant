@@ -16,7 +16,9 @@ class DynamoDBService:
 
         pprint({"INFO": f"Connected to DynamoDB table: {self.table_name}"})
 
-    def get_user(self, user_id: str):
+    def get_user(self, user_id: int):
+        user_id = str(user_id)
+
         try:
             response = self.table.get_item(Key={"user_id": user_id})
             return response.get("Item")
@@ -25,13 +27,13 @@ class DynamoDBService:
             return None
 
     def save_user(self, user_id: int, phone_number: str, first_name: str, last_name: str):
-        user_id = str(user_id)
-        phone_number = str(phone_number)
-
         existing_user = self.get_user(user_id)
         if existing_user:
             pprint({"INFO": f"User {user_id} already exists."})
             return existing_user
+
+        user_id = str(user_id)
+        phone_number = str(phone_number)
 
         try:
             new_user = {
@@ -63,6 +65,7 @@ class DynamoDBService:
                     SET #sty = :sty,
                         #colors = :cls,
                         #brands = :br,
+                        #gender = :g,
                         #ht = :h,
                         #wt = :w,
                         survey_completed = :sc
@@ -71,6 +74,7 @@ class DynamoDBService:
                     "#sty": "style",
                     "#colors": "colors",
                     "#brands": "brands",
+                    "#gender": "gender",
                     "#ht": "height",
                     "#wt": "weight"
                 },
@@ -78,6 +82,7 @@ class DynamoDBService:
                     ":sty": survey_data.get("style", ""),
                     ":cls": survey_data.get("colors", ""),
                     ":br": survey_data.get("brands", ""),
+                    ":g": survey_data.get("gender", ""),
                     ":h": survey_data.get("height", ""),
                     ":w": survey_data.get("weight", ""),
                     ":sc": True
@@ -86,3 +91,22 @@ class DynamoDBService:
             pprint({"INFO": f"Survey updated for user {user_id} in {self.table_name}."})
         except (BotoCoreError, NoCredentialsError) as e:
             pprint({"ERROR": f"Error updating survey for {user_id} in {self.table_name}: {str(e)}"})
+
+    def update_wardrobe(self, user_id: int, s3_key: str, summary: str):
+        user_id = str(user_id)
+
+        try:
+            response = self.table.update_item(
+                Key={"user_id": user_id},
+                UpdateExpression="SET wardrobe = list_append(if_not_exists(wardrobe, :empty_list), :new_item)",
+                ExpressionAttributeValues={
+                    ":new_item": [{"s3_key": s3_key, "summary": summary}],
+                    ":empty_list": [],
+                },
+                ReturnValues="UPDATED_NEW"
+            )
+            pprint(f"Wardrobe updated for user {user_id}. Added item: {s3_key}")
+            return response
+        except (BotoCoreError, NoCredentialsError) as e:
+            pprint(f"Error updating wardrobe for user {user_id}: {e}")
+            return None

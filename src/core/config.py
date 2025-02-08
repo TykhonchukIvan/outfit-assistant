@@ -12,6 +12,7 @@ def getConfig() -> dict:
     aws_secret_access_key = os.getenv("AWS_SECRET_ACCESS_KEY")
     dynamo_table_name = os.getenv("DYNAMO_TABLE_NAME")
     region_name = os.getenv("REGION_NAME")
+    s3_name = os.getenv("S3_NAME")
 
     pprint({"INFO": "Loaded config"})
 
@@ -22,4 +23,5 @@ def getConfig() -> dict:
         "aws_secret_access_key": aws_secret_access_key,
         "dynamo_table_name": dynamo_table_name,
         "region_name": region_name,
+        "s3_name": s3_name,
     }
