@@ -1,0 +1,10 @@
+version: "3.9"
+services:
+  document:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: outfit-assistant
+    env_file:
+      - .env
+    restart: unless-stopped

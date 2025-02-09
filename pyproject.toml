@@ -15,7 +15,7 @@ python-dotenv = "^1.0.1"
 python-telegram-bot = "^21.10"
 logging = "^0.4.9.6"
 openai = "^1.61.1"
-boto3 = "^1.36.14"
+boto3 = "^1.36.16"
 
 
 [build-system]
