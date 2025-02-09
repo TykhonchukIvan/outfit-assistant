@@ -31,15 +31,11 @@ class ServiceMediator:
         self.openai_chat = OpenAIChat(api_key=config["open_ai_api_key"])
         self.dynamo_db = DynamoDBService(
             region_name=config["region_name"],
-            aws_access_key_id=config["aws_access_key_id"],
             dynamo_table_name=config["dynamo_table_name"],
-            aws_secret_access_key=config["aws_secret_access_key"]
         )
         self.s3_storage = S3ImageStorage(
             bucket_name=config["s3_name"],
             region_name=config["region_name"],
-            aws_access_key_id=config["aws_access_key_id"],
-            aws_secret_access_key=config["aws_secret_access_key"]
         )
 
         pprint({"INFO": "ServiceMediator initialized."})

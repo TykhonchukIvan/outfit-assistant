@@ -1,8 +1,5 @@
 from pprint import pprint
-from dotenv import load_dotenv
 import os
-
-load_dotenv()
 
 
 def getPrompts() -> dict:

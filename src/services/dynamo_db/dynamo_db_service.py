@@ -4,12 +4,10 @@ from botocore.exceptions import BotoCoreError, NoCredentialsError
 
 
 class DynamoDBService:
-    def __init__(self, region_name: str, aws_access_key_id: str, aws_secret_access_key: str, dynamo_table_name: str):
+    def __init__(self, region_name: str, dynamo_table_name: str):
         self.dynamodb = boto3.resource(
             "dynamodb",
             region_name=region_name,
-            aws_access_key_id=aws_access_key_id,
-            aws_secret_access_key=aws_secret_access_key
         )
         self.table_name = dynamo_table_name
         self.table = self.dynamodb.Table(self.table_name)

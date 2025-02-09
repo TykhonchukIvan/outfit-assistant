@@ -7,12 +7,10 @@ from pprint import pprint
 
 
 class S3ImageStorage:
-    def __init__(self, region_name: str, aws_access_key_id: str, aws_secret_access_key: str, bucket_name: str):
+    def __init__(self, region_name: str, bucket_name: str):
         self.s3_client = boto3.client(
             "s3",
             region_name=region_name,
-            aws_access_key_id=aws_access_key_id,
-            aws_secret_access_key=aws_secret_access_key
         )
         self.bucket_name = bucket_name
         self.region_name = region_name
